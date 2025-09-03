@@ -77,9 +77,23 @@
             transition: background-color 0.3s, transform 0.2s;
         }
 
-        .login-form .btn-login:hover {
+        .btn-login:hover {
             background-color: #1565c0;
             transform: translateY(-2px);
+        }
+
+        .message {
+            margin-top: 20px;
+            font-weight: 600;
+            display: none; /* Initially hidden */
+        }
+
+        .message.success {
+            color: #28a745;
+        }
+
+        .message.error {
+            color: #dc3545;
         }
     </style>
 </head>
@@ -87,7 +101,7 @@
 
     <div class="login-container">
         <h2>JOS Auth and API Hub</h2>
-        <form class="login-form" action="#" method="post">
+        <form id="loginForm" class="login-form">
             <div class="input-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Put Username here" required>
@@ -98,7 +112,38 @@
             </div>
             <button type="submit" class="btn-login">Log In</button>
         </form>
+        <p id="message" class="message"></p>
     </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            // Prevent the default form submission (which would refresh the page)
+            event.preventDefault();
+
+            // Get the user's input values
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+            const messageElement = document.getElementById('message');
+
+            // Hardcoded credentials for demonstration
+            const correctUsername = "Boonandjin";
+            const correctPassword = "Boonandjin19*";
+
+            // Check if the credentials are correct
+            if (usernameInput === correctUsername && passwordInput === correctPassword) {
+                // If correct, show a success message
+                messageElement.textContent = 'Login successful! Welcome to the hub.';
+                messageElement.className = 'message success';
+            } else {
+                // If incorrect, show an error message
+                messageElement.textContent = 'Invalid username or password. Please try again.';
+                messageElement.className = 'message error';
+            }
+            
+            // Make the message visible
+            messageElement.style.display = 'block';
+        });
+    </script>
 
 </body>
 </html>
