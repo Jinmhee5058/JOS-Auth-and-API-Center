@@ -1,1 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JOS Auth and API Hub</title>
+    <!-- Link to your CSS (you can add a custom stylesheet later) -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Include any JS libraries here -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+</head>
+
+<body>
+
+    <!-- Main Hub Section -->
+    <div id="main-container">
+        <header>
+            <h1>Welcome to JOS Auth & API Hub</h1>
+            <p>Secure Authentication & API Integration Portal</p>
+        </header>
+
+        <section id="auth-section">
+            <h2>Login to Access APIs</h2>
+
+            <!-- Login Form -->
+            <form id="login-form">
+                <div>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        </section>
+
+        <section id="api-section" style="display:none;">
+            <h2>API Access</h2>
+            <p>Select an API endpoint to interact with:</p>
+
+            <!-- API List (Placeholder) -->
+            <button onclick="fetchAPIData()">Fetch API Data</button>
+
+            <div id="api-data"></div>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 JOS Inc.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Simulate API base URL for JOS Auth and APIs
+        const API_BASE_URL = 'https://api.jos.com';
+
+        // Handle the login functionality
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Simulate a login request (POST) to the API
+                const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+                    username,
+                    password
+                });
+
+                if (response.data.success) {
+                    // Store token in localStorage or sessionStorage (simplified for demo)
+                    localStorage.setItem('authToken', response.data.token);
+                    // Switch to the API access section
+                    document.getElementById('auth-section').style.display = 'none';
+                    document.getElementById('api-section').style.display = 'block';
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Logged in successfully!',
+                        text: 'You can now interact with the APIs.'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Login Failed',
+                        text: response.data.message || 'Please check your credentials.'
+                    });
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Something went wrong',
+                    text: 'Please try again later.'
+                });
+            }
+        });
+
+        // Fetch API Data
+        async function fetchAPIData() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Not authenticated',
+                    text: 'You need to log in first.'
+                });
+                return;
+            }
+
+            try {
+                const response = await axios.get(`${API_BASE_URL}/data`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                // Display API data
+                const dataContainer = document.getElementById('api-data');
+                dataContainer.innerHTML = `<pre>${JSON.stringify(response.data, null, 2)}</pre>`;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error Fetching Data',
+                    text: 'Please try again later.'
+                });
+            }
+        }
+    </script>
+
+</body>
+
+</html>
 
